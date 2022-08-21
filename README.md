@@ -14,6 +14,8 @@ Make sure to reinstall and update this package whenever the common code changes.
 ### Environment variables
 Before starting the API, make sure there is a `.env` file in the root directory with all the environment variables listed in the `.env.example` file.
 
+> Note: At this point no environment variables are used.
+
 ### DEV Server
 To start the API in development mode simply run the `npm run start:dev` script, and it will be served at [http://localhost:8400](http://localhost:8400).
 
@@ -39,3 +41,26 @@ These checks however can also be run using the `npm run lint` and `npm run forma
 
 ### API e2e / integration tests
 TBA
+
+Running the local server in the background
+------------------------------------------
+
+One easy way to run the server in the background is using `nohup`. 
+Create an alias in the `~/.bashrc` file to make it easier:
+```shell
+alias pks-local='nohup node /path/to/pks-local-api/dist/main.js > /path/to/pks-local.out &'
+```
+- The last argument is a path where the log file will be stored. Each new run of the app will clear the log and start over.
+- Also note that in the log file you can actually see the PID of the running app, e.g. `[Nest] 23947 - 08/21/2022, 6:32:26 PM LOG ...`
+
+Useful commands to find and to stop the server:
+```shell
+# list the running node processes
+pgrep node 
+
+# get detailed info about a process by PID
+ps -Flww -p <PID>
+
+# stop the server (process) by PID
+kill <PID>
+```

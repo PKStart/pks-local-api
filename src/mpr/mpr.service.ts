@@ -10,6 +10,12 @@ import { homedir } from 'os'
 import { resolve } from 'path'
 import { LocalApiError, MprConfig } from 'pks-common'
 import { ChangeProfileRequestDto, GameProfileDto, MprDataDto } from './mpr.dto'
+import {
+  PK_MPR_CONFIG_FILE,
+  PK_MPR_FOLDER,
+  PK_MPR_G502_ACTIVE_PROFILE_FILE,
+  PK_MPR_G502_GAME_PROFILE_FILE,
+} from './mpr.constants'
 
 @Injectable()
 export class MprService {
@@ -43,9 +49,7 @@ export class MprService {
   private readMprConfig(): GameProfileDto[] {
     try {
       return (
-        JSON.parse(
-          readFileSync(resolve(homedir(), process.env.PK_MPR_CONFIG_FILE)).toString()
-        ) as MprConfig
+        JSON.parse(readFileSync(resolve(homedir(), PK_MPR_CONFIG_FILE)).toString()) as MprConfig
       ).profiles as GameProfileDto[]
     } catch (e) {
       this.logger.error('Error reading MprConfig')
@@ -57,9 +61,7 @@ export class MprService {
   private readActiveProfile(): number {
     try {
       return Number(
-        readFileSync(resolve(homedir(), process.env.PK_MPR_G502_ACTIVE_PROFILE_FILE))
-          .toString()
-          .trim()
+        readFileSync(resolve(homedir(), PK_MPR_G502_ACTIVE_PROFILE_FILE)).toString().trim()
       )
     } catch (e) {
       this.logger.error('Error reading active mouse profile')
@@ -70,7 +72,7 @@ export class MprService {
 
   private readSavedGameProfile(profiles: GameProfileDto[]): GameProfileDto {
     try {
-      const gameName = readFileSync(resolve(homedir(), process.env.PK_MPR_G502_GAME_PROFILE_FILE))
+      const gameName = readFileSync(resolve(homedir(), PK_MPR_G502_GAME_PROFILE_FILE))
         .toString()
         .trim()
       return profiles.find(({ name }) => name === gameName)
@@ -84,9 +86,7 @@ export class MprService {
   private runMprScript(filename: string): void {
     try {
       this.logger.log('Running script: ' + filename)
-      const output = execSync(
-        `/bin/bash ${resolve(homedir(), process.env.PK_MPR_FOLDER, filename)}`
-      )
+      const output = execSync(`/bin/bash ${resolve(homedir(), PK_MPR_FOLDER, filename)}`)
       this.logger.log(output.toString().trim() || 'No output for script ' + filename)
     } catch (e) {
       this.logger.error('Error running MPR script: ' + filename)
